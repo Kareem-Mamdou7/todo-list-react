@@ -68,9 +68,24 @@ function TodoList() {
     if (e.key === "Enter") handleAddTask();
   }
 
+  function calculateCompleted() {
+    let completed = 0;
+
+    todoList.map((item) => {
+      if (item.isChecked) completed++;
+    });
+
+    return completed;
+  }
+
   return (
     <>
       <div className="todo-list-container">
+        <p className="todo-completed-percentage">
+          {calculateCompleted() !== todoList.length
+            ? `${calculateCompleted()} / ${todoList.length} Completed`
+            : "All your tasks are completed!"}
+        </p>
         <div className="todo-list-top-part">
           <input
             type="text"
