@@ -82,9 +82,13 @@ function TodoList() {
     <>
       <div className="todo-list-container">
         <p className="todo-completed-percentage">
-          {calculateCompleted() !== todoList.length
-            ? `${calculateCompleted()} / ${todoList.length} Completed`
-            : "All your tasks are completed!"}
+          {calculateCompleted() !== todoList.length ? (
+            `${calculateCompleted()} / ${todoList.length} Completed`
+          ) : (
+            <span className="all-completed-text">
+              All your tasks are completed!
+            </span>
+          )}
         </p>
         <div className="todo-list-top-part">
           <input
@@ -118,7 +122,7 @@ function TodoList() {
                   }}
                 >
                   <img
-                    src="up-arrow-svgrepo-com.svg"
+                    src="aliceblue-up.svg"
                     alt="UP"
                     className="move-arrow-image"
                   />
@@ -131,7 +135,7 @@ function TodoList() {
                 >
                   <img
                     type="svg"
-                    src="/down-arrow-svgrepo-com.svg"
+                    src="aliceblue-down.svg"
                     alt="DOWN"
                     className="move-arrow-image"
                   />
