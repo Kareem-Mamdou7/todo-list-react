@@ -173,27 +173,30 @@ function TodoList() {
           ) : (
             todoList.map((item, index) => (
               <div key={index} className="todo-content">
-                <p
-                  className={`todo-text ${item.isChecked ? "completed-todo-text" : ""}`}
-                >
-                  {!item.isEditing ? (
-                    item.text
-                  ) : (
-                    <input
-                      type="text"
-                      className="todo-editing-input"
-                      value={item.editValue}
-                      onChange={(event) => {
-                        const updatedList = [...todoList];
-                        updatedList[index].editValue = event.target.value;
-                        setTodoList(updatedList);
-                      }}
-                      onKeyDown={(event) => {
-                        handleEditKeydown(index, event);
-                      }}
-                    />
-                  )}
-                </p>
+                {!item.isEditing ? (
+                  <p
+                    className={`todo-text ${item.isChecked ? "completed-todo-text" : ""}`}
+                    onDoubleClick={() => {
+                      handleEditTask(index);
+                    }}
+                  >
+                    {item.text}
+                  </p>
+                ) : (
+                  <input
+                    type="text"
+                    className="todo-editing-input"
+                    value={item.editValue}
+                    onChange={(event) => {
+                      const updatedList = [...todoList];
+                      updatedList[index].editValue = event.target.value;
+                      setTodoList(updatedList);
+                    }}
+                    onKeyDown={(event) => {
+                      handleEditKeydown(index, event);
+                    }}
+                  />
+                )}
 
                 <button
                   className="move-todo-up-button"
