@@ -8,7 +8,7 @@ body {
 .todo-list-container {
   display: flex;
   flex-direction: column;
-  width: 900px;
+  width: 1100px;
 }
 
 .todo-completed-percentage {
@@ -20,7 +20,7 @@ body {
 }
 
 .all-completed-text {
-  color: hsla(100, 100%, 80%, 0.7);
+  color: hsla(120, 100%, 80%, 0.7);
 }
 
 .todo-list-top-part {
@@ -36,6 +36,12 @@ body {
   border-radius: 10px;
   padding: 20px 30px;
   font-size: 1.6rem;
+  transition: box-shadow 250ms ease;
+}
+
+.todo-list-input:hover,
+.todo-list-input:focus {
+  box-shadow: 0px 0px 30px hsl(200, 100%, 90%, 0.2);
 }
 
 .add-button {
@@ -64,11 +70,16 @@ body {
 .todo-list {
   max-width: 100%;
   margin-top: 40px;
-  padding: 30px;
+  padding: 40px 50px;
   color: aliceblue;
   border: solid 3px;
   border-radius: 10px;
   font-size: 2rem;
+  transition: box-shadow 250ms ease;
+}
+
+.todo-list:hover {
+  box-shadow: 0px 0px 50px hsl(200, 100%, 90%, 0.2);
 }
 
 .empty-todo-text {
@@ -86,7 +97,7 @@ body {
     Arial, sans-serif;
   flex: 1;
   margin-top: 20px;
-  margin-right: 32px;
+  margin-right: 60px;
   margin-bottom: 20px;
 }
 
@@ -96,6 +107,22 @@ body {
   color: #444444;
 }
 
+.todo-editing-input {
+  font-family:
+    "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans",
+    Arial, sans-serif;
+  width: 94%;
+  height: 100%;
+  min-height: 40px;
+  font-size: 2rem;
+  margin: 0;
+  border: solid aliceblue;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: transparent;
+  color: aliceblue;
+}
+
 .move-todo-down-button,
 .move-todo-up-button {
   display: flex;
@@ -103,7 +130,7 @@ body {
   padding: 10px;
   border-radius: 6px;
   margin-right: 16px;
-  border: slateblue solid 3px;
+  border: dodgerblue solid 3px;
   background-color: transparent;
   color: aliceblue;
   font-size: 1.2rem;
@@ -115,13 +142,38 @@ body {
 
 .move-todo-down-button:hover,
 .move-todo-up-button:hover {
-  background-color: slateblue;
-  border-color: slateblue;
-  box-shadow: 0px 0px 20px hsl(270, 100%, 60%, 0.6);
+  background-color: dodgerblue;
+  border-color: dodgerblue;
+  box-shadow: 0px 0px 20px hsl(220, 100%, 60%, 0.6);
 }
 
 .move-arrow-image {
   height: 20px;
+}
+
+.edit-button {
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.4rem;
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin-right: 20px;
+  border: 3px solid blueviolet;
+  background-color: transparent;
+  color: hsl(250, 100%, 90%);
+  transition:
+    background-color 250ms ease,
+    border-color 250ms ease,
+    color 250ms ease,
+    box-shadow 250ms ease,
+    color 250ms ease;
+}
+
+.edit-button:hover {
+  color: aliceblue;
+  background-color: blueviolet;
+  border-color: blueviolet;
+  box-shadow: 0px 0px 20px hsl(270, 100%, 60%, 0.6);
 }
 
 .delete-button {
@@ -133,7 +185,7 @@ body {
   margin-right: 20px;
   border: 3px solid red;
   background-color: transparent;
-  color: red;
+  color: hsl(00, 100%, 80%);
   transition:
     background-color 250ms ease,
     border-color 250ms ease,

@@ -17,9 +17,70 @@ function TodoList() {
 
   function handleAddTask() {
     if (currentInput) {
-      setTodoList([...todoList, { text: currentInput, isChecked: false }]);
+      setTodoList([
+        ...todoList,
+        {
+          text: currentInput,
+          isChecked: false,
+          isEditing: false,
+          editValue: "",
+        },
+      ]);
       setCurrentInput("");
     }
+  }
+
+  function handleEditTask(index) {
+    const updatedList = todoList.map((item, i) => {
+      if (index === i) {
+        return {
+          ...item,
+          isEditing: !todoList[index].isEditing,
+          editValue: item.text,
+        };
+      }
+
+      return item;
+    });
+
+    setTodoList(updatedList);
+  }
+
+  function handleEditKeydown(index, event) {
+    if (event.key === "Enter") handleSaveEditedTask(index);
+    else if (event.key === "Escape") handleCancelEditedTask(index);
+  }
+
+  function handleSaveEditedTask(index) {
+    const updatedList = todoList.map((item, i) => {
+      if (index === i) {
+        return {
+          ...item,
+          text: item.editValue,
+          isEditing: false,
+        };
+      }
+
+      return item;
+    });
+
+    setTodoList(updatedList);
+  }
+
+  function handleCancelEditedTask(index) {
+    const updatedList = todoList.map((item, i) => {
+      if (index === i) {
+        return {
+          ...item,
+          isEditing: false,
+          editValue: "",
+        };
+      }
+
+      return item;
+    });
+
+    setTodoList(updatedList);
   }
 
   function handleDeleteTask(index) {
@@ -90,6 +151,7 @@ function TodoList() {
             </span>
           )}
         </p>
+
         <div className="todo-list-top-part">
           <input
             type="text"
@@ -99,6 +161,7 @@ function TodoList() {
             onChange={handleDisplayInput}
             onKeyDown={handleKeyDown}
           />
+
           <button className="add-button" onClick={handleAddTask}>
             ADD
           </button>
@@ -113,8 +176,25 @@ function TodoList() {
                 <p
                   className={`todo-text ${item.isChecked ? "completed-todo-text" : ""}`}
                 >
-                  - {item.text}
+                  {!item.isEditing ? (
+                    item.text
+                  ) : (
+                    <input
+                      type="text"
+                      className="todo-editing-input"
+                      value={item.editValue}
+                      onChange={(event) => {
+                        const updatedList = [...todoList];
+                        updatedList[index].editValue = event.target.value;
+                        setTodoList(updatedList);
+                      }}
+                      onKeyDown={(event) => {
+                        handleEditKeydown(index, event);
+                      }}
+                    />
+                  )}
                 </p>
+
                 <button
                   className="move-todo-up-button"
                   onClick={() => {
@@ -127,6 +207,7 @@ function TodoList() {
                     className="move-arrow-image"
                   />
                 </button>
+
                 <button
                   className="move-todo-down-button"
                   onClick={() => {
@@ -140,6 +221,16 @@ function TodoList() {
                     className="move-arrow-image"
                   />
                 </button>
+
+                <button
+                  className="edit-button"
+                  onClick={() => {
+                    handleEditTask(index);
+                  }}
+                >
+                  Edit
+                </button>
+
                 <button
                   className="delete-button"
                   onClick={() => {
@@ -148,6 +239,7 @@ function TodoList() {
                 >
                   Delete
                 </button>
+
                 <input
                   type="checkbox"
                   className="todo-checkbox"
