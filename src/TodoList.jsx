@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 function TodoList() {
+  const emptyAddTimeoutId = useRef(null);
+  const [currentInput, setCurrentInput] = useState("");
   const [todoList, setTodoList] = useState(() => {
     const savedList = localStorage.getItem("todoList");
     return savedList ? JSON.parse(savedList) : [];
   });
-  const [currentInput, setCurrentInput] = useState("");
 
   useEffect(() => {
     localStorage.setItem("todoList", JSON.stringify(todoList));
@@ -27,7 +28,29 @@ function TodoList() {
         },
       ]);
       setCurrentInput("");
+    } else {
+      if (emptyAddTimeoutId.current) clearTimeout(emptyAddTimeoutId.current);
+
+      const emptyAddAlert = document.querySelector(
+        ".todo-completed-percentage",
+      );
+
+      emptyAddAlert.innerHTML = `
+        <span class="empty-input-message">
+          The input is Empty! Please add a todo.
+        </span>
+      `;
+
+      emptyAddTimeoutId.current = setTimeout(() => {
+        emptyAddAlert.innerHTML = `${calculateCompleted()} / ${todoList.length} Completed`;
+      }, 1500);
     }
+  }
+
+  function handleEditValueChange(index, event) {
+    const updatedList = [...todoList];
+    updatedList[index].editValue = event.target.value;
+    setTodoList(updatedList);
   }
 
   function handleEditTask(index) {
@@ -163,7 +186,7 @@ function TodoList() {
           />
 
           <button className="add-button" onClick={handleAddTask}>
-            ADD
+            ADD{" "}
           </button>
         </div>
 
@@ -187,10 +210,9 @@ function TodoList() {
                     type="text"
                     className="todo-editing-input"
                     value={item.editValue}
-                    onChange={(event) => {
-                      const updatedList = [...todoList];
-                      updatedList[index].editValue = event.target.value;
-                      setTodoList(updatedList);
+                    autoFocus
+                    onChange={(e) => {
+                      handleEditValueChange(index, e);
                     }}
                     onKeyDown={(event) => {
                       handleEditKeydown(index, event);

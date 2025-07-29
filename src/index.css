@@ -19,6 +19,10 @@ body {
   margin-bottom: 30px;
 }
 
+.empty-input-message {
+  color: hsl(0, 100%, 65%);
+}
+
 .all-completed-text {
   color: hsla(120, 100%, 80%, 0.7);
 }
