@@ -164,118 +164,121 @@ function TodoList() {
 
   return (
     <>
-      <div className="todo-list-container">
-        <p className="todo-completed-percentage">
-          {calculateCompleted() !== todoList.length ? (
-            `${calculateCompleted()} / ${todoList.length} Completed`
-          ) : (
-            <span className="all-completed-text">
-              All your tasks are completed!
-            </span>
-          )}
-        </p>
+      <div className="container">
+        <div className="todo-list-container">
+          <p className="todo-completed-percentage">
+            {calculateCompleted() !== todoList.length ? (
+              `${calculateCompleted()} / ${todoList.length} Completed`
+            ) : (
+              <span className="all-completed-text">
+                All your tasks are completed!
+              </span>
+            )}
+          </p>
 
-        <div className="todo-list-top-part">
-          <input
-            type="text"
-            className="todo-list-input"
-            placeholder="Enter your todo..."
-            value={currentInput}
-            onChange={handleDisplayInput}
-            onKeyDown={handleKeyDown}
-          />
+          <div className="todo-list-top-part">
+            <input
+              type="text"
+              className="todo-list-input"
+              placeholder="Enter your todo..."
+              value={currentInput}
+              onChange={handleDisplayInput}
+              onKeyDown={handleKeyDown}
+            />
 
-          <button className="add-button" onClick={handleAddTask}>
-            ADD{" "}
-          </button>
-        </div>
+            <button className="add-button" onClick={handleAddTask}>
+              ADD{" "}
+            </button>
+          </div>
 
-        <div className="todo-list">
-          {todoList.length === 0 ? (
-            <span className="empty-todo-text">Todo list is empty...</span>
-          ) : (
-            todoList.map((item, index) => (
-              <div key={index} className="todo-content">
-                {!item.isEditing ? (
-                  <p
-                    className={`todo-text ${item.isChecked ? "completed-todo-text" : ""}`}
-                    onDoubleClick={() => {
-                      handleEditTask(index);
-                    }}
-                  >
-                    {item.text}
-                  </p>
-                ) : (
-                  <input
-                    type="text"
-                    className="todo-editing-input"
-                    value={item.editValue}
-                    autoFocus
-                    onChange={(e) => {
-                      handleEditValueChange(index, e);
-                    }}
-                    onKeyDown={(event) => {
-                      handleEditKeydown(index, event);
-                    }}
-                  />
-                )}
+          <div className="todo-list">
+            {todoList.length === 0 ? (
+              <span className="empty-todo-text">Todo list is empty...</span>
+            ) : (
+              todoList.map((item, index) => (
+                <div key={index} className="todo-item">
+                  <div className="todo-text-and-checkbox">
+                    <input
+                      type="checkbox"
+                      className="todo-checkbox"
+                      checked={item.isChecked}
+                      onChange={() => {
+                        toggleChecked(index);
+                      }}
+                    />
+                    {!item.isEditing ? (
+                      <p
+                        className={`todo-text ${item.isChecked ? "completed-todo-text" : ""}`}
+                        onDoubleClick={() => {
+                          handleEditTask(index);
+                        }}
+                      >
+                        {item.text}
+                      </p>
+                    ) : (
+                      <input
+                        type="text"
+                        className="todo-editing-input"
+                        value={item.editValue}
+                        autoFocus
+                        onChange={(e) => {
+                          handleEditValueChange(index, e);
+                        }}
+                        onKeyDown={(event) => {
+                          handleEditKeydown(index, event);
+                        }}
+                      />
+                    )}
+                  </div>
 
-                <button
-                  className="move-todo-up-button"
-                  onClick={() => {
-                    moveTaskUp(index);
-                  }}
-                >
-                  <img
-                    src="aliceblue-up.svg"
-                    alt="UP"
-                    className="move-arrow-image"
-                  />
-                </button>
-
-                <button
-                  className="move-todo-down-button"
-                  onClick={() => {
-                    moveTaskDown(index);
-                  }}
-                >
-                  <img
-                    type="svg"
-                    src="aliceblue-down.svg"
-                    alt="DOWN"
-                    className="move-arrow-image"
-                  />
-                </button>
-
-                <button
-                  className="edit-button"
-                  onClick={() => {
-                    handleEditTask(index);
-                  }}
-                >
-                  Edit
-                </button>
-
-                <button
-                  className="delete-button"
-                  onClick={() => {
-                    handleDeleteTask(index);
-                  }}
-                >
-                  Delete
-                </button>
-
-                <input
-                  type="checkbox"
-                  className="todo-checkbox"
-                  checked={item.isChecked}
-                  onChange={() => {
-                    toggleChecked(index);
-                  }}
-                />
-              </div>
-            ))
-          )}
+                  <div className="todo-item-buttons">
+                    {" "}
+                    <button
+                      className="move-todo-up-button"
+                      onClick={() => {
+                        moveTaskUp(index);
+                      }}
+                    >
+                      <img
+                        src="aliceblue-up.svg"
+                        alt="UP"
+                        className="move-arrow-image"
+                      />
+                    </button>
+                    <button
+                      className="move-todo-down-button"
+                      onClick={() => {
+                        moveTaskDown(index);
+                      }}
+                    >
+                      <img
+                        type="svg"
+                        src="aliceblue-down.svg"
+                        alt="DOWN"
+                        className="move-arrow-image"
+                      />
+                    </button>
+                    <button
+                      className="edit-button"
+                      onClick={() => {
+                        handleEditTask(index);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => {
+                        handleDeleteTask(index);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </>
