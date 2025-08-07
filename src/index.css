@@ -127,8 +127,8 @@ body {
 
 .todo-checkbox {
   cursor: pointer;
-  width: 1.2em;
-  height: 1.2em;
+  width: 1.6em;
+  height: 1.6em;
   accent-color: lightgreen;
 }
 
@@ -138,6 +138,7 @@ body {
 
 .todo-text {
   margin: 0;
+  width: 90%;
 }
 
 .todo-item-buttons {
@@ -241,8 +242,8 @@ body {
   }
 
   .todo-checkbox {
-    height: 1.8em;
-    width: 1.8em;
+    height: 2em;
+    width: 2em;
   }
 
   .todo-text {
@@ -275,8 +276,8 @@ body {
   }
 
   .todo-checkbox {
-    height: 2.2em;
-    width: 2.2em;
+    height: 2.4em;
+    width: 2.4em;
   }
 
   .todo-text {
@@ -320,8 +321,8 @@ body {
   }
 
   .todo-checkbox {
-    width: 2.2em;
-    height: 2.2em;
+    width: 2.4em;
+    height: 2.4em;
   }
 
   .todo-text-and-checkbox,
