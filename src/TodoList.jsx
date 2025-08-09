@@ -1,7 +1,15 @@
 import { useState, useEffect, useRef } from "react";
+import {
+  handleEditTask,
+  getCompletedCount,
+  moveTaskDown,
+  moveTaskUp,
+  toggleChecked,
+} from "./utils/listHandlers";
 
 function TodoList() {
   const emptyAddTimeoutId = useRef(null);
+  const topText = useRef(null);
   const [currentInput, setCurrentInput] = useState("");
   const [todoList, setTodoList] = useState(() => {
     const savedList = localStorage.getItem("todoList");
@@ -16,6 +24,14 @@ function TodoList() {
     setCurrentInput(event.target.value);
   }
 
+  function applyCheck(index) {
+    setTodoList(toggleChecked(todoList, index));
+  }
+
+  function handleEnterKeyInput(e) {
+    if (e.key === "Enter") handleAddTask();
+  }
+
   function handleAddTask() {
     if (currentInput) {
       setTodoList([
@@ -27,24 +43,29 @@ function TodoList() {
           editValue: "",
         },
       ]);
+
       setCurrentInput("");
     } else {
       if (emptyAddTimeoutId.current) clearTimeout(emptyAddTimeoutId.current);
 
-      const emptyAddAlert = document.querySelector(
-        ".todo-completed-percentage",
-      );
-
-      emptyAddAlert.innerHTML = `
+      topText.current.innerHTML = `
         <span class="empty-input-message">
           The input is Empty! Please add a todo.
         </span>
       `;
 
       emptyAddTimeoutId.current = setTimeout(() => {
-        emptyAddAlert.innerHTML = `${calculateCompleted()} / ${todoList.length} Completed`;
+        topText.current.innerHTML = `${getCompletedCount(todoList)} / ${todoList.length} Completed`;
       }, 1500);
     }
+  }
+
+  function applyMoveUp(index) {
+    setTodoList(moveTaskUp(todoList, index));
+  }
+
+  function applyMoveDown(index) {
+    setTodoList(moveTaskDown(todoList, index));
   }
 
   function handleEditValueChange(index, event) {
@@ -53,7 +74,7 @@ function TodoList() {
     setTodoList(updatedList);
   }
 
-  function handleEditTask(index) {
+  function toggleIsEditing(index) {
     const updatedList = todoList.map((item, i) => {
       if (index === i) {
         return {
@@ -69,25 +90,8 @@ function TodoList() {
     setTodoList(updatedList);
   }
 
-  function handleEditKeydown(index, event) {
-    if (event.key === "Enter") handleSaveEditedTask(index);
-    else if (event.key === "Escape") handleCancelEditedTask(index);
-  }
-
-  function handleSaveEditedTask(index) {
-    const updatedList = todoList.map((item, i) => {
-      if (index === i) {
-        return {
-          ...item,
-          text: item.editValue,
-          isEditing: false,
-        };
-      }
-
-      return item;
-    });
-
-    setTodoList(updatedList);
+  function applyEditToTask(index) {
+    setTodoList(handleEditTask(todoList, index));
   }
 
   function handleCancelEditedTask(index) {
@@ -106,6 +110,11 @@ function TodoList() {
     setTodoList(updatedList);
   }
 
+  function handleEditKeydown(index, event) {
+    if (event.key === "Enter") applyEditToTask(index);
+    else if (event.key === "Escape") handleCancelEditedTask(index);
+  }
+
   function handleDeleteTask(index) {
     setTodoList((t) =>
       t.filter((_, i) => {
@@ -114,61 +123,13 @@ function TodoList() {
     );
   }
 
-  function moveTaskUp(index) {
-    if (index === 0) return;
-    const updatedList = [...todoList];
-
-    [updatedList[index], updatedList[index - 1]] = [
-      updatedList[index - 1],
-      updatedList[index],
-    ];
-
-    setTodoList(updatedList);
-  }
-
-  function moveTaskDown(index) {
-    if (index === todoList.length - 1) return;
-    const updatedList = [...todoList];
-
-    [updatedList[index], updatedList[index + 1]] = [
-      updatedList[index + 1],
-      updatedList[index],
-    ];
-
-    setTodoList(updatedList);
-  }
-
-  function toggleChecked(index) {
-    const updatedList = [...todoList];
-    updatedList[index] = {
-      ...updatedList[index],
-      isChecked: !updatedList[index].isChecked,
-    };
-
-    setTodoList(updatedList);
-  }
-
-  function handleKeyDown(e) {
-    if (e.key === "Enter") handleAddTask();
-  }
-
-  function calculateCompleted() {
-    let completed = 0;
-
-    todoList.map((item) => {
-      if (item.isChecked) completed++;
-    });
-
-    return completed;
-  }
-
   return (
     <>
       <div className="container">
         <div className="todo-list-container">
-          <p className="todo-completed-percentage">
-            {calculateCompleted() !== todoList.length ? (
-              `${calculateCompleted()} / ${todoList.length} Completed`
+          <p className="todo-completed-percentage" ref={topText}>
+            {getCompletedCount(todoList) !== todoList.length ? (
+              `${getCompletedCount(todoList)} / ${todoList.length} Completed`
             ) : (
               <span className="all-completed-text">
                 All your tasks are completed!
@@ -183,7 +144,7 @@ function TodoList() {
               placeholder="Enter your todo..."
               value={currentInput}
               onChange={handleDisplayInput}
-              onKeyDown={handleKeyDown}
+              onKeyDown={handleEnterKeyInput}
             />
 
             <button className="add-button" onClick={handleAddTask}>
@@ -203,14 +164,14 @@ function TodoList() {
                       className="todo-checkbox"
                       checked={item.isChecked}
                       onChange={() => {
-                        toggleChecked(index);
+                        applyCheck(index);
                       }}
                     />
                     {!item.isEditing ? (
                       <p
                         className={`todo-text ${item.isChecked ? "completed-todo-text" : ""}`}
                         onDoubleClick={() => {
-                          handleEditTask(index);
+                          toggleIsEditing(index);
                         }}
                       >
                         {item.text}
@@ -236,7 +197,7 @@ function TodoList() {
                     <button
                       className="move-todo-up-button"
                       onClick={() => {
-                        moveTaskUp(index);
+                        applyMoveUp(index);
                       }}
                     >
                       <img
@@ -248,7 +209,7 @@ function TodoList() {
                     <button
                       className="move-todo-down-button"
                       onClick={() => {
-                        moveTaskDown(index);
+                        applyMoveDown(index);
                       }}
                     >
                       <img
@@ -261,7 +222,7 @@ function TodoList() {
                     <button
                       className="edit-button"
                       onClick={() => {
-                        handleEditTask(index);
+                        toggleIsEditing(index);
                       }}
                     >
                       Edit
