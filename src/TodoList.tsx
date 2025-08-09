@@ -1,3 +1,4 @@
+import { type Task } from "./utils/types.js";
 import { useState, useEffect, useRef } from "react";
 import {
   handleEditTask,
@@ -5,11 +6,11 @@ import {
   moveTaskDown,
   moveTaskUp,
   toggleChecked,
-} from "./utils/listHandlers";
+} from "./utils/listHandlers.js";
 
 function TodoList() {
-  const emptyAddTimeoutId = useRef(null);
-  const topText = useRef(null);
+  const emptyAddTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const topText = useRef<HTMLParagraphElement>(null);
   const [currentInput, setCurrentInput] = useState("");
   const [todoList, setTodoList] = useState(() => {
     const savedList = localStorage.getItem("todoList");
@@ -20,15 +21,15 @@ function TodoList() {
     localStorage.setItem("todoList", JSON.stringify(todoList));
   }, [todoList]);
 
-  function handleDisplayInput(event) {
+  function handleDisplayInput(event: React.ChangeEvent<HTMLInputElement>) {
     setCurrentInput(event.target.value);
   }
 
-  function applyCheck(index) {
+  function applyCheck(index: number) {
     setTodoList(toggleChecked(todoList, index));
   }
 
-  function handleEnterKeyInput(e) {
+  function handleEnterKeyInput(e: React.KeyboardEvent) {
     if (e.key === "Enter") handleAddTask();
   }
 
@@ -48,76 +49,82 @@ function TodoList() {
     } else {
       if (emptyAddTimeoutId.current) clearTimeout(emptyAddTimeoutId.current);
 
-      topText.current.innerHTML = `
-        <span class="empty-input-message">
-          The input is Empty! Please add a todo.
-        </span>
-      `;
+      if (topText.current) {
+        topText.current.innerHTML = `
+          <span class="empty-input-message">
+            The input is Empty! Please add a todo.
+          </span>
+        `;
+      }
 
       emptyAddTimeoutId.current = setTimeout(() => {
-        topText.current.innerHTML = `${getCompletedCount(todoList)} / ${todoList.length} Completed`;
+        if (topText.current)
+          topText.current.innerHTML = `${getCompletedCount(todoList)} / ${todoList.length} Completed`;
       }, 1500);
     }
   }
 
-  function applyMoveUp(index) {
+  function applyMoveUp(index: number) {
     setTodoList(moveTaskUp(todoList, index));
   }
 
-  function applyMoveDown(index) {
+  function applyMoveDown(index: number) {
     setTodoList(moveTaskDown(todoList, index));
   }
 
-  function handleEditValueChange(index, event) {
+  function handleEditValueChange(
+    index: number,
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) {
     const updatedList = [...todoList];
     updatedList[index].editValue = event.target.value;
     setTodoList(updatedList);
   }
 
-  function toggleIsEditing(index) {
-    const updatedList = todoList.map((item, i) => {
+  function toggleIsEditing(index: number) {
+    const updatedList = todoList.map((task: Task, i: number) => {
       if (index === i) {
         return {
-          ...item,
+          ...task,
           isEditing: !todoList[index].isEditing,
-          editValue: item.text,
+          editValue: task.text,
         };
       }
 
-      return item;
+      return task;
     });
 
     setTodoList(updatedList);
   }
 
-  function applyEditToTask(index) {
+  function applyEditToTask(index: number) {
     setTodoList(handleEditTask(todoList, index));
   }
 
-  function handleCancelEditedTask(index) {
-    const updatedList = todoList.map((item, i) => {
+  function handleCancelEditedTask(index: number) {
+    const updatedList = todoList.map((task: Task, i: number) => {
       if (index === i) {
         return {
-          ...item,
+          ...task,
           isEditing: false,
           editValue: "",
         };
       }
 
-      return item;
+      return task;
     });
 
     setTodoList(updatedList);
   }
 
-  function handleEditKeydown(index, event) {
+  function handleEditKeydown(index: number, event: React.KeyboardEvent) {
     if (event.key === "Enter") applyEditToTask(index);
     else if (event.key === "Escape") handleCancelEditedTask(index);
   }
 
-  function handleDeleteTask(index) {
-    setTodoList((t) =>
-      t.filter((_, i) => {
+  function handleDeleteTask(index: number) {
+    setTodoList((task: Task[]) =>
+      task.filter((_, i: number) => {
         return i !== index;
       }),
     );
@@ -156,31 +163,31 @@ function TodoList() {
             {todoList.length === 0 ? (
               <span className="empty-todo-text">Todo list is empty...</span>
             ) : (
-              todoList.map((item, index) => (
+              todoList.map((task: Task, index: number) => (
                 <div key={index} className="todo-item">
                   <div className="todo-text-and-checkbox">
                     <input
                       type="checkbox"
                       className="todo-checkbox"
-                      checked={item.isChecked}
+                      checked={task.isChecked}
                       onChange={() => {
                         applyCheck(index);
                       }}
                     />
-                    {!item.isEditing ? (
+                    {!task.isEditing ? (
                       <p
-                        className={`todo-text ${item.isChecked ? "completed-todo-text" : ""}`}
+                        className={`todo-text ${task.isChecked ? "completed-todo-text" : ""}`}
                         onDoubleClick={() => {
                           toggleIsEditing(index);
                         }}
                       >
-                        {item.text}
+                        {task.text}
                       </p>
                     ) : (
                       <input
                         type="text"
                         className="todo-editing-input"
-                        value={item.editValue}
+                        value={task.editValue}
                         autoFocus
                         onChange={(e) => {
                           handleEditValueChange(index, e);
@@ -213,7 +220,6 @@ function TodoList() {
                       }}
                     >
                       <img
-                        type="svg"
                         src="aliceblue-down.svg"
                         alt="DOWN"
                         className="move-arrow-image"
