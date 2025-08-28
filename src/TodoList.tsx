@@ -1,5 +1,5 @@
-import { type Task } from "./utils/types.js";
 import { useState, useEffect, useRef } from "react";
+import { type Task } from "./utils/types.js";
 import {
   handleEditTask,
   getCompletedCount,
@@ -25,12 +25,12 @@ function TodoList() {
     setCurrentInput(event.target.value);
   }
 
-  function applyCheck(index: number) {
-    setTodoList(toggleChecked(todoList, index));
+  function applyCheck(taskIndex: number) {
+    setTodoList(toggleChecked(todoList, taskIndex));
   }
 
-  function handleEnterKeyInput(e: React.KeyboardEvent) {
-    if (e.key === "Enter") handleAddTask();
+  function handleEnterKeyInput(event: React.KeyboardEvent) {
+    if (event.key === "Enter") handleAddTask();
   }
 
   function handleAddTask() {
@@ -64,12 +64,12 @@ function TodoList() {
     }
   }
 
-  function applyMoveUp(index: number) {
-    setTodoList(moveTaskUp(todoList, index));
+  function applyMoveUp(taskIndex: number) {
+    setTodoList(moveTaskUp(todoList, taskIndex));
   }
 
-  function applyMoveDown(index: number) {
-    setTodoList(moveTaskDown(todoList, index));
+  function applyMoveDown(taskIndex: number) {
+    setTodoList(moveTaskDown(todoList, taskIndex));
   }
 
   function handleEditValueChange(
@@ -81,12 +81,12 @@ function TodoList() {
     setTodoList(updatedList);
   }
 
-  function toggleIsEditing(index: number) {
-    const updatedList = todoList.map((task: Task, i: number) => {
-      if (index === i) {
+  function toggleIsEditing(taskIndex: number) {
+    const updatedList = todoList.map((task: Task, editedTaskIndex: number) => {
+      if (taskIndex === editedTaskIndex) {
         return {
           ...task,
-          isEditing: !todoList[index].isEditing,
+          isEditing: !todoList[taskIndex].isEditing,
           editValue: task.text,
         };
       }
@@ -97,13 +97,13 @@ function TodoList() {
     setTodoList(updatedList);
   }
 
-  function applyEditToTask(index: number) {
-    setTodoList(handleEditTask(todoList, index));
+  function applyEditToTask(taskIndex: number) {
+    setTodoList(handleEditTask(todoList, taskIndex));
   }
 
-  function handleCancelEditedTask(index: number) {
-    const updatedList = todoList.map((task: Task, i: number) => {
-      if (index === i) {
+  function handleCancelEditedTask(taskIndex: number) {
+    const updatedList = todoList.map((task: Task, editedTaskIndex: number) => {
+      if (taskIndex === editedTaskIndex) {
         return {
           ...task,
           isEditing: false,
@@ -117,15 +117,15 @@ function TodoList() {
     setTodoList(updatedList);
   }
 
-  function handleEditKeydown(index: number, event: React.KeyboardEvent) {
-    if (event.key === "Enter") applyEditToTask(index);
-    else if (event.key === "Escape") handleCancelEditedTask(index);
+  function handleEditKeydown(taskIndex: number, event: React.KeyboardEvent) {
+    if (event.key === "Enter") applyEditToTask(taskIndex);
+    else if (event.key === "Escape") handleCancelEditedTask(taskIndex);
   }
 
-  function handleDeleteTask(index: number) {
+  function handleDeleteTask(indexToDelete: number) {
     setTodoList((task: Task[]) =>
-      task.filter((_, i: number) => {
-        return i !== index;
+      task.filter((_, currentIndex: number) => {
+        return currentIndex !== indexToDelete;
       }),
     );
   }
